@@ -217,6 +217,8 @@ function frame(now: number) {
 }
 
 async function boot() {
+  // Wait for the bundled handwriting font so the first canvas frame doesn't draw with a fallback face.
+  try { await Promise.race([document.fonts.load('20px "Patrick Hand"'), new Promise(r => setTimeout(r, 1500))]); } catch { /* fine */ }
   await store.load();
   sfx.muted = store.get('sound') === 'off';
   vibe.enabled = store.get('vibration') !== 'off';

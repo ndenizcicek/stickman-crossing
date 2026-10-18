@@ -23,7 +23,7 @@ export class Renderer {
 
   resize() {
     const r = this.canvas.getBoundingClientRect();
-    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    const dpr = Math.min(3, window.devicePixelRatio || 1);
     this.width = r.width; this.height = r.height;
     this.canvas.width = Math.round(r.width * dpr);
     this.canvas.height = Math.round(r.height * dpr);
@@ -35,7 +35,7 @@ export class Renderer {
 
   /** Draws one vehicle centred on this canvas, sized to fit (used for the city circles on the map). */
   badge(kind: VehicleKind, size: number, color?: string) {
-    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    const dpr = Math.min(3, window.devicePixelRatio || 1);
     this.canvas.width = Math.round(size * dpr); this.canvas.height = Math.round(size * dpr);
     this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     this.width = this.height = size; this.t = 0;

@@ -56,5 +56,5 @@ Kendi gerçek reklamlarına asla tıklama, hesap askıya alınabilir.
 - Build'i seç → Submit for Review. Apple incelemesi genelde birkaç gün içinde sonuçlanıyor.
 
 ## İsteğe bağlı
-- Yazı tipi şu an Google Fonts'tan yükleniyor; internet yokken iOS'un "Chalkboard SE" yazı tipi kullanılıyor, oyun yine çalışıyor. İstersen Patrick Hand'i projeye gömeriz.
+- Patrick Hand yazı tipi projeye gömülü (`public/fonts`), oyun internetsiz de aynı görünür.
 - Android için de aynı proje kullanılır: `npm run android:sync`, sonra Android Studio.
