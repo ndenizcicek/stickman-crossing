@@ -6,8 +6,8 @@ set -euo pipefail
 PLIST="ios/App/App/Info.plist"
 PB=/usr/libexec/PlistBuddy
 
-# Google's TEST AdMob app ID. Replace with your real iOS app ID from the AdMob console before release.
-ADMOB_APP_ID="${ADMOB_IOS_APP_ID:-ca-app-pub-3940256099942544~1458002511}"
+# Stickman Crossing iOS app ID from AdMob.
+ADMOB_APP_ID="${ADMOB_IOS_APP_ID:-ca-app-pub-5010064104505404~3423941850}"
 
 set_key() { # key type value
   $PB -c "Delete :$1" "$PLIST" 2>/dev/null || true

@@ -40,14 +40,14 @@ codemagic.io → GitHub ile giriş → depoyu ekle
 
 İlk derleme yaklaşık 15–25 dakika sürer. Bitince uygulama TestFlight'a düşer; iPhone'una TestFlight uygulamasını kurup oyunu gerçek telefonda deneyebilirsin. Test reklamları "Test Ad" etiketiyle görünür.
 
-### 5. AdMob hesabı ve gerçek reklam kimlikleri
-admob.google.com → Apps → Add app → iOS
-- 2 reklam birimi oluştur: **Interstitial** ve **Rewarded**.
-- `src/ads-admob.ts` içindeki `AD_UNITS.ios` alanına gerçek kimlikleri yaz, `TESTING = false` yap.
-- `codemagic.yaml` içindeki `ADMOB_IOS_APP_ID` alanına uygulama kimliğini (`~` içeren) yaz.
-- Uygulama mağazaya çıkınca AdMob'da mağaza bağlantısını ekle; reklamlar ondan sonra tam açılır.
+### 5. AdMob (hazır)
+AdMob uygulaması ve iki reklam birimi oluşturuldu, kimlikleri koda işlendi (`src/ads-admob.ts`, `codemagic.yaml`).
+- Geliştirme sırasında `TESTING = true` kalır; telefonda Google'ın test reklamları görünür.
+- Mağazaya gönderilecek derlemeden önce `src/ads-admob.ts` içinde `TESTING = false` yapılır.
+- `public/app-ads.txt` dosyası, App Store sayfasındaki geliştirici web sitesinin kök adresinde yayınlanmalı (AdMob sahiplik doğrulaması).
+- Uygulama mağazaya çıkınca AdMob'da uygulamaya mağaza bağlantısı eklenir; reklamlar ondan sonra tam açılır.
 
-Kendi gerçek reklamlarına asla tıklama, hesap askıya alınabilir. Kendi telefonunu AdMob'a test cihazı olarak ekle.
+Kendi gerçek reklamlarına asla tıklama, hesap askıya alınabilir.
 
 ### 6. Mağaza sayfası ve inceleme
 - `docs/APP_STORE_LISTING.md` metinlerini kopyala.

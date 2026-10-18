@@ -4,11 +4,26 @@ import { Capacitor } from '@capacitor/core';
 import type { AdProvider } from './ads.js';
 
 /**
- * Ad unit IDs. These are Google's official TEST units, safe to use during development.
- * Before release, create the app and two ad units (Interstitial, Rewarded) in the AdMob console
- * and paste the real IDs here. Never click your own real ads: AdMob can suspend the account.
+ * Switch to false for the App Store release build. While true, Google's official test ads are shown,
+ * which are safe to tap. Never tap your own real ads: AdMob can suspend the account.
  */
-const AD_UNITS = {
+const TESTING = true;
+
+/** Real ad units from the Stickman Crossing app in AdMob (publisher pub-5010064104505404). */
+const LIVE_UNITS = {
+  ios: {
+    interstitial: 'ca-app-pub-5010064104505404/6592855668', // "Between rounds"
+    rewarded: 'ca-app-pub-5010064104505404/8077502730',     // "Continue and unlock"
+  },
+  // Android app not created in AdMob yet: test units until then.
+  android: {
+    interstitial: 'ca-app-pub-3940256099942544/1033173712',
+    rewarded: 'ca-app-pub-3940256099942544/5224354917',
+  },
+};
+
+/** Google's official test units. */
+const TEST_UNITS = {
   ios: {
     interstitial: 'ca-app-pub-3940256099942544/4411468910',
     rewarded: 'ca-app-pub-3940256099942544/1712485313',
@@ -18,9 +33,8 @@ const AD_UNITS = {
     rewarded: 'ca-app-pub-3940256099942544/5224354917',
   },
 };
-/** Keep true until the real IDs are in and the app is going to the store. */
-const TESTING = true;
 
+const AD_UNITS = TESTING ? TEST_UNITS : LIVE_UNITS;
 type Platform = keyof typeof AD_UNITS;
 
 export class AdMobProvider implements AdProvider {

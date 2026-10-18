@@ -13,8 +13,8 @@ workflows:
         distribution_type: app_store
         bundle_identifier: com.stickmancrossing.game
       vars:
-        # Set your real AdMob iOS app ID here (or as a secret variable) before the store release.
-        ADMOB_IOS_APP_ID: ca-app-pub-3940256099942544~1458002511
+        # Stickman Crossing iOS app ID from AdMob.
+        ADMOB_IOS_APP_ID: ca-app-pub-5010064104505404~3423941850
         # The app's numeric Apple ID (App Store Connect > App Information). Fill in after creating the app.
         APP_STORE_APPLE_ID: "0000000000"
       node: 22
