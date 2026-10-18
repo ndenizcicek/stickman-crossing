@@ -9,7 +9,7 @@ Xcode veya Mac gerekmiyor. Bu adımlar Apple Developer üyeliğin **aktif** oldu
 - `scripts/ios-configure.sh`: iOS ayarlarını (AdMob kimliği, takip izni metni, dikey ekran, şifreleme beyanı) otomatik yapar.
 - `codemagic.yaml`: bulut derleme tarifi.
 - `assets/`: uygulama ikonu ve açılış ekranı (tüm boyutlar derlemede otomatik üretilir).
-- `public/privacy.html`: gizlilik politikası. İçindeki `{{SUPPORT_EMAIL}}` yerine destek e-postası yazılacak.
+- `public/privacy.html`: gizlilik politikası (iletişim: hello@almostordinary.net).
 - `docs/APP_STORE_LISTING.md`: mağaza metinleri.
 
 ## Hesap aktif olunca yapılacaklar
