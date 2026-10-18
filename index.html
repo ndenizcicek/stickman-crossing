@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <title>Stickman Crossing</title>
+  <meta name="description" content="Hop across busy city streets, pick up friends along the way and keep your stickman chain alive.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="stage">
+    <canvas id="game" aria-label="Game"></canvas>
+    <div class="hud" id="hud" hidden>
+      <div>
+        <div class="score" id="score">0</div>
+        <div class="chain" id="chain"></div>
+      </div>
+      <div class="hud-right">
+        <button class="pause" id="pause" aria-label="Pause"><span></span><span></span></button>
+        <div class="best"><span id="cityname"></span><br>Best: <span id="best">0</span></div>
+      </div>
+    </div>
+    <div class="overlay" id="overlay" hidden></div>
+  </div>
+  <script type="module" src="./src/main.ts"></script>
+</body>
+</html>
