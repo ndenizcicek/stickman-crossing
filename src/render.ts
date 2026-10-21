@@ -21,15 +21,27 @@ export class Renderer {
     this.ctx = ctx;
   }
 
-  resize() {
-    const r = this.canvas.getBoundingClientRect();
+  private dpr = 0;
+
+  /**
+   * Matches the canvas's pixel buffer to its on-screen size. Called every frame and cheap when nothing changed.
+   * On iPhone the web view can still be settling its size (safe areas, launch) when the game starts, and no
+   * resize event follows; sizing only once left the drawing stretched and blurry.
+   */
+  fit() {
+    const w = this.canvas.clientWidth, h = this.canvas.clientHeight;
     const dpr = Math.min(3, window.devicePixelRatio || 1);
-    this.width = r.width; this.height = r.height;
-    this.canvas.width = Math.round(r.width * dpr);
-    this.canvas.height = Math.round(r.height * dpr);
+    if (w === this.width && h === this.height && dpr === this.dpr) return;
+    if (w < 2 || h < 2) return; // not laid out yet
+    this.width = w; this.height = h; this.dpr = dpr;
+    this.canvas.width = Math.round(w * dpr);
+    this.canvas.height = Math.round(h * dpr);
     this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    this.cell = r.width / GRID_COLS;
+    this.cell = w / GRID_COLS;
   }
+
+  /** @deprecated kept for callers; same as fit(). */
+  resize() { this.fit(); }
 
   get viewRows() { return this.height / this.cell; }
 
@@ -53,6 +65,7 @@ export class Renderer {
   private sy(row: number) { return this.height - (row - this.cam + 1) * this.cell; }
 
   draw(g: Game) {
+    this.fit();
     const { ctx, cell } = this;
     this.t = g.time; this.cam = g.camRow;
     const city = CITIES[g.world.cityId];

@@ -26,7 +26,7 @@ html, body { height: 100%; margin: 0; background: var(--outside); color: var(--i
 body { font-family: var(--hand); -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
 [hidden] { display: none !important; }
 
-.stage { position: relative; height: 100%; max-width: 520px; margin: 0 auto; background: var(--paper); box-shadow: 0 0 0 2px var(--grid); }
+.stage { position: fixed; top: 0; bottom: 0; left: 0; right: 0; max-width: 520px; margin: 0 auto; background: var(--paper); box-shadow: 0 0 0 2px var(--grid); }
 canvas { display: block; width: 100%; height: 100%; touch-action: none; cursor: pointer; }
 
 .hud { position: absolute; top: env(safe-area-inset-top, 0px); left: 0; right: 0; display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 16px; pointer-events: none; }

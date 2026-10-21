@@ -196,8 +196,11 @@ document.addEventListener('visibilitychange', () => {
 });
 
 // ---------- loop ----------
-window.addEventListener('resize', () => renderer.resize());
-renderer.resize();
+// The renderer re-measures the canvas every frame (see Renderer.fit), so rotation, safe-area changes and a web
+// view that settles its size after launch are all handled; these listeners just make it immediate.
+window.addEventListener('resize', () => renderer.fit());
+window.visualViewport?.addEventListener('resize', () => renderer.fit());
+renderer.fit();
 
 let last = performance.now();
 function frame(now: number) {
