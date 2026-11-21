@@ -1,0 +1,12 @@
+"DepotBuild"
+{
+	// Windows depot: put the unzipped "stickman-crossing-windows" build into content\windows\
+	"DepotID" "0000001"
+	"ContentRoot" "..\content\windows\"
+	"FileMapping"
+	{
+		"LocalPath" "*"
+		"DepotPath" "."
+		"Recursive" "1"
+	}
+}

@@ -34,6 +34,10 @@ npm run preview   # serve the production build
 | `src/ads.ts` | Ad interface, placeholder ads, interstitial pacing rules |
 | `src/audio.ts` | Synthesized sound effects |
 | `src/main.ts` | Wires everything together, input, game loop |
+| `src/platform.ts` | Detects Steam (desktop), mobile app or browser |
+| `src/gamepad.ts` | Controller input (Xbox / PlayStation / Steam Deck) |
+| `src/achievements.ts` | Steam achievements |
+| `desktop/` | Electron shell for the Steam build (main process, preload, Steam App ID) |
 
 ## Cities
 
@@ -56,6 +60,12 @@ Add an entry to `CITIES` and `CITY_ORDER` in `src/config.ts` (the map, unlock ch
 (`'left'` or `'right'`), vehicle mix, bike-lane and tram chances, wide roads, snowfall, paint jobs,
 sidewalk style and obstacles, road colour.
 New vehicle or obstacle types also need a drawing in `src/render.ts`.
+
+## Steam (desktop)
+
+`npm run desktop` runs the desktop app locally; the "Steam build" GitHub Action produces Windows and Linux builds.
+The Steam build has no ads (Steam does not allow ad-supported games), so it hides the continue-with-ad and
+unlock-with-ads options. Full guide: `docs/STEAM_RELEASE.md`.
 
 ## Ads
 

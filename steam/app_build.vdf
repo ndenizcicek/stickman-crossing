@@ -1,0 +1,14 @@
+"AppBuild"
+{
+	// Replace 0000000 with the real App ID and depot IDs from Steamworks.
+	"AppID" "0000000"
+	"Desc" "Stickman Crossing build"
+	"ContentRoot" "..\content\"
+	"BuildOutput" "..\output\"
+	"SetLive" ""
+	"Depots"
+	{
+		"0000001" "depot_windows.vdf"
+		"0000002" "depot_linux.vdf"
+	}
+}

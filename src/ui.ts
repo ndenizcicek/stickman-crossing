@@ -1,5 +1,6 @@
 // DOM screens layered over the canvas: main menu, city picker, settings, pause, game over, ad countdown.
 import { APP_VERSION, CITIES, CITY_ORDER, CityId } from './config.js';
+import { platform } from './platform.js';
 import { progress } from './progress.js';
 import { Renderer } from './render.js';
 
@@ -18,6 +19,12 @@ export interface SettingsState {
   vibration: boolean;
   /** Only shown in the app, where AdMob's privacy options form exists. */
   showAdChoices: boolean;
+  /** Phones only: hidden on the Steam/desktop build. */
+  showVibration: boolean;
+  /** Steam/desktop build only. */
+  fullscreen?: boolean;
+  /** The privacy policy describes the mobile app's ads; the Steam build has none and links its store page instead. */
+  showPrivacy: boolean;
 }
 
 export class UI {
@@ -53,16 +60,42 @@ export class UI {
   /** Pressing Enter while a screen is open triggers its main button. */
   primary() { this.overlay.querySelector<HTMLButtonElement>('[data-primary]')?.click(); }
 
-  menu(o: { onPlay: () => void; onSettings: () => void }) {
+  /** Escape / gamepad B: the screen's back, close or resume button, if it has one. */
+  back() {
+    const b = this.overlay.querySelector<HTMLButtonElement>('[data-back]');
+    if (b) { b.click(); return true; }
+    return false;
+  }
+
+  /** Arrow keys / D-pad in menus: move focus between the open screen's buttons, in reading order. */
+  moveFocus(step: 1 | -1) {
+    const items = [...this.overlay.querySelectorAll<HTMLButtonElement>('button:not([disabled])')];
+    if (!items.length) return;
+    const i = items.indexOf(document.activeElement as HTMLButtonElement);
+    const next = i < 0 ? items[0] : items[(i + step + items.length) % items.length];
+    next.focus();
+    next.scrollIntoView({ block: 'nearest' });
+  }
+
+  /** Enter / gamepad A in menus: press the focused button, or the main one. */
+  activate() {
+    const f = document.activeElement;
+    if (f instanceof HTMLButtonElement && this.overlay.contains(f)) f.click();
+    else this.primary();
+  }
+
+  menu(o: { onPlay: () => void; onSettings: () => void; onQuit?: () => void }) {
     this.show(`
       <h1>Stickman <span>Crossing</span></h1>
       <p class="lead">Cross the street. Grab your friends. Don’t get flattened.</p>
       <div class="btns">
         <button data-primary id="m-play" class="big-btn">Play</button>
         <button id="m-settings" class="ghost">Settings</button>
+        ${o.onQuit ? '<button id="m-quit" class="ghost">Quit</button>' : ''}
       </div>`);
     this.on('m-play', o.onPlay);
     this.on('m-settings', o.onSettings);
+    if (o.onQuit) this.on('m-quit', o.onQuit);
   }
 
   /**
@@ -86,11 +119,11 @@ export class UI {
     const height = mapPos(CITY_ORDER.length - 1).y + MAP_ROW;
     this.show(`
       <h2 class="ink">Pick a city</h2>
-      <p class="hint">Tap to hop · Swipe to dodge · Grab people who wave</p>
+      <p class="hint">${platform === 'steam' ? 'Arrow keys, WASD or a controller' : 'Tap to hop · Swipe to dodge'} · Grab people who wave</p>
       <div class="map-scroll" id="map-scroll">
         <div class="map" id="map" style="height:${height}px"><svg class="trail" id="trail" aria-hidden="true"></svg>${nodes}</div>
       </div>
-      <button id="c-back" class="ghost">Back</button>`, true);
+      <button id="c-back" class="ghost" data-back>Back</button>`, true);
 
     const map = $<HTMLDivElement>('map');
     map.querySelectorAll<HTMLButtonElement>('.node').forEach(b => {
@@ -100,7 +133,10 @@ export class UI {
       b.addEventListener('click', () => (progress.isOpen(k) ? o.onPick(k) : o.onLocked(k)));
     });
     this.drawTrail();
-    map.querySelector<HTMLButtonElement>('.here')?.scrollIntoView({ block: 'center' });
+    // Start on the last played city, so keyboard and controller players can confirm right away.
+    const here = map.querySelector<HTMLButtonElement>('.here');
+    here?.focus({ preventScroll: true });
+    here?.scrollIntoView({ block: 'center' });
     this.on('c-back', o.onBack);
   }
 
@@ -121,8 +157,11 @@ export class UI {
     svg.innerHTML = paths;
   }
 
-  /** What it takes to open a locked city: a score in the previous city, or a number of ads. */
-  lockSheet(c: CityId, o: { onPlay: (c: CityId) => void; onWatchAd: () => void; onBack: () => void }) {
+  /**
+   * What it takes to open a locked city: a score in the previous city, or a number of ads.
+   * Without ads (Steam) only the score route is shown.
+   */
+  lockSheet(c: CityId, o: { onPlay: (c: CityId) => void; onWatchAd?: () => void; onBack: () => void }) {
     const st = progress.status(c);
     const city = CITIES[c];
     let body: string;
@@ -135,14 +174,14 @@ export class UI {
           <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="${st.score}" aria-valuenow="${st.prevBest}"><span style="width:${pct}%"></span></div>
           <p class="small">Your best: ${st.prevBest} / ${st.score}</p>
           <button id="l-play" data-primary>Play ${CITIES[st.prev].name}</button>
-        </div>
+        </div>${o.onWatchAd ? `
         <p class="or">or</p>
         <div class="way">
           <p><b>Watch ${st.ads} ads</b></p>
           <div class="dots" aria-label="${st.adsWatched} of ${st.ads} watched">${dots}</div>
           <p class="small">${st.adsWatched} of ${st.ads} watched</p>
           <button id="l-ad" class="alt">Watch an ad</button>
-        </div>`;
+        </div>` : ''}`;
     } else if (st.kind === 'blocked') {
       body = `<p>Unlock <b>${CITIES[st.waitingFor].name}</b> first.</p>`;
     } else {
@@ -153,10 +192,10 @@ export class UI {
       <h2 class="ink">${city.name}</h2>
       <p class="lead">${city.tagline}</p>
       ${body}
-      <button id="l-back" class="ghost">Back to map</button>`);
+      <button id="l-back" class="ghost" data-back>Back to map</button>`);
     new Renderer($<HTMLCanvasElement>('l-badge')).badge(city.badge, 62, city.paint?.[city.badge]?.[0]);
     if (st.kind === 'unlockable') this.on('l-play', () => o.onPlay(st.prev));
-    this.on('l-ad', o.onWatchAd);
+    if (o.onWatchAd) this.on('l-ad', o.onWatchAd);
     this.on('l-back', o.onBack);
   }
 
@@ -168,7 +207,7 @@ export class UI {
       <p class="lead">${city.tagline}</p>
       <div class="btns">
         <button data-primary id="u-play">Play ${city.name}</button>
-        <button class="ghost" id="u-map">Back to map</button>
+        <button class="ghost" id="u-map" data-back>Back to map</button>
       </div>`);
     new Renderer($<HTMLCanvasElement>('u-badge')).badge(city.badge, 62, city.paint?.[city.badge]?.[0]);
     this.on('u-play', o.onPlay);
@@ -177,6 +216,7 @@ export class UI {
 
   settings(s: SettingsState, o: {
     onSound: (on: boolean) => void; onVibration: (on: boolean) => void;
+    onFullscreen?: (on: boolean) => void;
     onPrivacy: () => void; onAdChoices: () => void; onBack: () => void;
   }) {
     const toggle = (id: string, label: string, on: boolean) => `
@@ -187,11 +227,12 @@ export class UI {
       <h2 class="ink">Settings</h2>
       <div class="rows">
         ${toggle('s-sound', 'Sound effects', s.sound)}
-        ${toggle('s-vib', 'Vibration', s.vibration)}
-        <button class="row-link" id="s-privacy">Privacy policy</button>
+        ${s.showVibration ? toggle('s-vib', 'Vibration', s.vibration) : ''}
+        ${s.fullscreen !== undefined ? toggle('s-full', 'Fullscreen', s.fullscreen) : ''}
+        ${s.showPrivacy ? '<button class="row-link" id="s-privacy">Privacy policy</button>' : ''}
         ${s.showAdChoices ? '<button class="row-link" id="s-ads">Ad privacy choices</button>' : ''}
       </div>
-      <button data-primary id="s-back">Done</button>
+      <button data-primary data-back id="s-back">Done</button>
       <p class="version">Version ${APP_VERSION}</p>`);
     const flip = (id: string, cb: (on: boolean) => void) => this.on(id, () => {
       const b = $<HTMLButtonElement>(id);
@@ -202,6 +243,7 @@ export class UI {
     });
     flip('s-sound', o.onSound);
     flip('s-vib', o.onVibration);
+    if (o.onFullscreen) flip('s-full', o.onFullscreen);
     this.on('s-privacy', o.onPrivacy);
     this.on('s-ads', o.onAdChoices);
     this.on('s-back', o.onBack);
@@ -210,7 +252,7 @@ export class UI {
   privacy(onBack: () => void) {
     this.show(`
       <iframe class="doc" src="./privacy.html" title="Privacy policy"></iframe>
-      <button data-primary id="p-back">Back</button>`, true);
+      <button data-primary data-back id="p-back">Back</button>`, true);
     this.on('p-back', onBack);
   }
 
@@ -218,7 +260,7 @@ export class UI {
     this.show(`
       <h2 class="ink">Paused</h2>
       <div class="btns">
-        <button data-primary id="p-resume">Resume</button>
+        <button data-primary data-back id="p-resume">Resume</button>
         <button id="p-settings" class="ghost">Settings</button>
         <button id="p-menu" class="ghost">Main menu</button>
       </div>`);

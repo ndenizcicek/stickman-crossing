@@ -10,7 +10,10 @@
     "typecheck": "tsc --noEmit",
     "ios:sync": "npm run build && npx cap sync ios",
     "android:sync": "npm run build && npx cap sync android",
-    "assets": "npx capacitor-assets generate --iconBackgroundColor '#f5f8fa' --splashBackgroundColor '#f5f8fa'"
+    "assets": "npx capacitor-assets generate --iconBackgroundColor '#f5f8fa' --splashBackgroundColor '#f5f8fa'",
+    "desktop": "npm run build && electron .",
+    "desktop:win": "npm run build && electron-builder --win --x64 --dir",
+    "desktop:linux": "npm run build && electron-builder --linux --x64 --dir"
   },
   "dependencies": {
     "@capacitor-community/admob": "^8.0.0",
@@ -18,12 +21,49 @@
     "@capacitor/haptics": "^8.0.0",
     "@capacitor/preferences": "^8.0.0",
     "@capacitor/ios": "^8.0.0",
-    "@capacitor/android": "^8.0.0"
+    "@capacitor/android": "^8.0.0",
+    "steamworks.js": "^0.4.0"
   },
   "devDependencies": {
     "@capacitor/assets": "^3.0.5",
     "@capacitor/cli": "^8.0.0",
     "typescript": "^5.6.0",
-    "vite": "^5.4.0"
+    "vite": "^5.4.0",
+    "electron": "^33.0.0",
+    "electron-builder": "^25.1.8"
+  },
+  "description": "Hop across busy city streets, grab friends and keep your stickman chain alive.",
+  "main": "desktop/main.cjs",
+  "author": "Burak Çiçek",
+  "build": {
+    "appId": "com.stickmancrossing.game",
+    "productName": "Stickman Crossing",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**",
+      "desktop/**",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "desktop/steam_appid.txt",
+        "to": "steam_appid.txt"
+      }
+    ],
+    "asarUnpack": [
+      "node_modules/steamworks.js/**"
+    ],
+    "win": {
+      "target": "dir",
+      "icon": "desktop/icon.png"
+    },
+    "linux": {
+      "target": "dir",
+      "icon": "desktop/icon.png",
+      "category": "Game",
+      "executableName": "stickman-crossing"
+    }
   }
 }

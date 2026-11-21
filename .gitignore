@@ -2,3 +2,4 @@ node_modules/
 dist/
 build-check/
 .DS_Store
+release/

@@ -2,13 +2,16 @@
 //
 // Screen flow:  Main menu ─ Play ─▶ City picker ─▶ Game ─▶ Game over ─▶ Play again / Change city / Menu
 //                        └ Settings (also reachable from Pause)
-import { AdPacing, AdProvider, FakeAdProvider } from './ads.js';
+import { checkCities, checkRun } from './achievements.js';
+import { AdPacing, AdProvider, FakeAdProvider, NoAdsProvider, offersAds } from './ads.js';
 import { AdMobProvider, isNativeApp } from './ads-admob.js';
 import { Sfx } from './audio.js';
 import { CITIES, CityId } from './config.js';
 import { Game, GameHooks } from './game.js';
+import { Gamepads, PadAction } from './gamepad.js';
 import { Vibration } from './haptics.js';
 import { Renderer } from './render.js';
+import { platform, steam } from './platform.js';
 import { progress } from './progress.js';
 import { store } from './storage.js';
 import { UI } from './ui.js';
@@ -19,8 +22,12 @@ const ui = new UI();
 const sfx = new Sfx();
 const vibe = new Vibration();
 const pacing = new AdPacing();
-// iOS / Android app: real AdMob ads. Browser: placeholder countdown (portal SDKs plug in here later).
-const ads: AdProvider = isNativeApp() ? new AdMobProvider() : new FakeAdProvider((label, s) => ui.countdown(label, s));
+const pads = new Gamepads();
+// Steam: no ads (Steam rules). iOS / Android app: AdMob. Browser: placeholder countdown (portal SDKs plug in here later).
+const ads: AdProvider = platform === 'steam' ? new NoAdsProvider()
+  : isNativeApp() ? new AdMobProvider()
+    : new FakeAdProvider((label, s) => ui.countdown(label, s));
+const hasAds = offersAds(ads);
 
 // Real values are read in boot(), after saved progress has loaded.
 let city: CityId = 'istanbul';
@@ -35,7 +42,7 @@ const hooks: GameHooks = {
   pickup: () => { sfx.pickup(); vibe.pickup(); },
   friendLost: () => { sfx.friendLost(); vibe.friendLost(); },
   hit: () => { sfx.hit(); vibe.hit(); },
-  scoreChanged: () => ui.hud(game.score, game.friends.length, city, best),
+  scoreChanged: () => { ui.hud(game.score, game.friends.length, city, best); checkRun(game.score, game.friends.length); },
   over: cause => onGameOver(cause),
 };
 
@@ -52,7 +59,11 @@ function showMenu() {
   frozen = false;
   ui.showHud(false);
   newGame(); // the street keeps moving behind the menu as a live background
-  ui.menu({ onPlay: showCities, onSettings: () => showSettings(showMenu) });
+  ui.menu({
+    onPlay: showCities,
+    onSettings: () => void showSettings(showMenu),
+    onQuit: platform === 'steam' ? () => steam()?.quit() : undefined,
+  });
 }
 
 function showCities() {
@@ -75,22 +86,31 @@ function startCity(c: CityId) {
 function showLock(c: CityId) {
   ui.lockSheet(c, {
     onPlay: startCity,
-    onWatchAd: () => void watchUnlockAd(c),
+    onWatchAd: hasAds ? () => void watchUnlockAd(c) : undefined,
     onBack: showCities,
   });
 }
 
 async function watchUnlockAd(c: CityId) {
   const earned = await withAd(() => ads.rewarded());
-  if (earned && progress.addAd(c)) ui.unlocked(c, { onPlay: () => startCity(c), onMap: showCities });
+  if (earned && progress.addAd(c)) {
+    checkCities(x => progress.isOpen(x));
+    ui.unlocked(c, { onPlay: () => startCity(c), onMap: showCities });
+  }
   else showLock(c);
 }
 
-function showSettings(back: () => void) {
-  ui.settings({ sound: !sfx.muted, vibration: vibe.enabled, showAdChoices: !!ads.privacyOptions && isNativeApp() }, {
+async function showSettings(back: () => void) {
+  const desktop = platform === 'steam';
+  const fullscreen = desktop ? await steam()!.isFullscreen().catch(() => false) : undefined;
+  ui.settings({
+    sound: !sfx.muted, vibration: vibe.enabled, showVibration: !desktop,
+    showAdChoices: !!ads.privacyOptions && isNativeApp(), fullscreen, showPrivacy: !desktop,
+  }, {
+    onFullscreen: desktop ? on => { steam()?.setFullscreen(on); store.set('fullscreen', on ? 'on' : 'off'); } : undefined,
     onSound: on => { sfx.unlock(); sfx.muted = !on; store.set('sound', on ? 'on' : 'off'); if (on) sfx.pickup(); },
     onVibration: on => { vibe.enabled = on; store.set('vibration', on ? 'on' : 'off'); if (on) vibe.pickup(); },
-    onPrivacy: () => ui.privacy(() => showSettings(back)),
+    onPrivacy: () => ui.privacy(() => void showSettings(back)),
     onAdChoices: () => void ads.privacyOptions?.(),
     onBack: back,
   });
@@ -113,7 +133,7 @@ function pause() {
 function showPause() {
   ui.pause({
     onResume: () => { ui.hide(); frozen = false; ads.gameplayStart(); },
-    onSettings: () => showSettings(showPause),
+    onSettings: () => void showSettings(showPause),
     onMenu: () => void afterBreak(showMenu),
   });
 }
@@ -124,7 +144,9 @@ function onGameOver(cause: string) {
   const newBest = progress.submitScore(city, game.score);
   if (newBest) { best = game.score; hooks.scoreChanged(); }
   const opened = progress.checkScoreUnlocks();
-  showGameOver(cause, newBest, !game.revived, opened);
+  checkCities(c => progress.isOpen(c));
+  // A continue costs a rewarded ad, so builds without ads (Steam) have no continue.
+  showGameOver(cause, newBest, hasAds && !game.revived, opened);
 }
 
 function showGameOver(cause: string, newBest: boolean, canRevive: boolean, opened: CityId[] = []) {
@@ -168,6 +190,14 @@ window.addEventListener('keydown', e => {
   sfx.unlock();
   if (ui.open) {
     if (e.key === 'Enter' && !(document.activeElement instanceof HTMLButtonElement)) { e.preventDefault(); ui.primary(); }
+    else if (e.key === 'Escape') { e.preventDefault(); ui.back(); }
+    else if (e.key === 'ArrowDown' || e.key === 'ArrowRight') { e.preventDefault(); ui.moveFocus(1); }
+    else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') { e.preventDefault(); ui.moveFocus(-1); }
+    return;
+  }
+  if (e.key === 'F11' && platform === 'steam') {
+    e.preventDefault();
+    void steam()!.isFullscreen().then(on => { steam()?.setFullscreen(!on); store.set('fullscreen', on ? 'off' : 'on'); });
     return;
   }
   if (e.key === 'Escape' || e.key === 'p' || e.key === 'P') { pause(); return; }
@@ -202,10 +232,27 @@ window.addEventListener('resize', () => renderer.fit());
 window.visualViewport?.addEventListener('resize', () => renderer.fit());
 renderer.fit();
 
+const PAD_MOVES: Partial<Record<PadAction, [number, number]>> = {
+  up: [0, 1], a: [0, 1], down: [0, -1], left: [-1, 0], right: [1, 0],
+};
+function handlePad(dt: number) {
+  for (const a of pads.poll(dt)) {
+    sfx.unlock();
+    if (ui.open) {
+      if (a === 'a') ui.activate();
+      else if (a === 'b' || a === 'start') ui.back();
+      else if (a === 'down' || a === 'right') ui.moveFocus(1);
+      else if (a === 'up' || a === 'left') ui.moveFocus(-1);
+    } else if (a === 'start' || a === 'b') pause();
+    else if (!frozen) { const m = PAD_MOVES[a]; if (m) game.move(m[0], m[1]); }
+  }
+}
+
 let last = performance.now();
 function frame(now: number) {
   const dt = Math.min(.05, (now - last) / 1000);
   last = now;
+  handlePad(dt);
   if (!frozen && !document.hidden) {
     game.update(dt, renderer.viewRows);
     if (game.state === 'play') {
@@ -228,6 +275,11 @@ async function boot() {
   const saved = store.get('city');
   city = saved && saved in CITIES && progress.isOpen(saved as CityId) ? saved as CityId : 'istanbul';
   progress.checkScoreUnlocks();
+  checkCities(c => progress.isOpen(c));
+  if (platform === 'steam') {
+    document.documentElement.classList.add('desktop');
+    if (store.get('fullscreen') === 'on') steam()?.setFullscreen(true);
+  }
   showMenu();
   requestAnimationFrame(frame);
   // The game must start even if ads fail to initialise (offline, ad blocker, consent error).

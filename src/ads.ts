@@ -16,6 +16,23 @@ export interface AdProvider {
   privacyOptions?(): Promise<void>;
 }
 
+/**
+ * Steam build: no ads at all. Steam does not allow ad-supported games or rewarded ads, so breaks never show,
+ * and the game hides every "watch an ad" option when `hasAds` is false.
+ */
+export class NoAdsProvider implements AdProvider {
+  readonly name = 'none';
+  readonly hasAds = false;
+  async init() {}
+  gameplayStart() {}
+  gameplayStop() {}
+  async interstitial() {}
+  async rewarded() { return false; }
+}
+
+/** True for providers that can show ads; the UI hides ad-based options otherwise. */
+export const offersAds = (p: AdProvider) => (p as { hasAds?: boolean }).hasAds !== false;
+
 /** Placeholder used during development: shows a 3-second countdown instead of a real ad. */
 export class FakeAdProvider implements AdProvider {
   readonly name = 'fake';
