@@ -3,7 +3,7 @@
 Character limits are App Store Connect's. Counts below include spaces.
 
 ## App name (max 30)
-Stickman Crossing
+Crosswalk Crew
 
 ## Subtitle (max 30)
 Hop the traffic, save friends
@@ -12,20 +12,21 @@ Hop the traffic, save friends
 Primary: Games > Casual. Secondary: Games > Arcade.
 
 ## Promotional text (max 170, can be changed any time without review)
-Three cities, three kinds of chaos. Dodge dolmuşes in Istanbul, yellow cabs in New York and left-hand traffic in Tokyo!
+Nine cities, nine kinds of chaos. Dodge dolmuşes in Istanbul, yellow cabs in New York, trams in Berlin and left-hand traffic in Tokyo!
 
 ## Description (max 4000)
 Cross the street. Then the next one. Then the next one.
 
-Stickman Crossing is a quick one-tap arcade game drawn in ballpoint pen on a school notebook. Hop forward through endless city traffic, dodge cars, trucks, buses and speeding couriers, and see how far you can get.
+Crosswalk Crew is a quick one-tap arcade game drawn in ballpoint pen on a school notebook. Hop forward through endless city traffic, dodge cars, trucks, buses and speeding couriers, and see how far you can get.
 
-GRAB YOUR FRIENDS
-People wave at you from the sidewalk. Walk past them and they take your hand. Every friend in your chain multiplies your score, but a long chain is harder to get across. One car in the wrong place and the chain breaks. How greedy will you be?
+BUILD YOUR CREW
+People wave at you from the sidewalk. Walk past them and they take your hand. Every friend in your crew multiplies your score, but a long chain is harder to get across. One car in the wrong place and the chain breaks. How greedy will you be?
 
-THREE CITIES, THREE WAYS TO GET FLATTENED
+NINE CITIES TO UNLOCK
 • Istanbul: dolmuşes stop without warning, couriers weave between lanes, street cats nap on the sidewalk.
 • New York: yellow cabs never slow down, fire trucks come through with lights flashing, manholes steam.
 • Tokyo: tiny kei cars, busy bike lanes, and traffic that drives on the left. Look the other way!
+• Then Moscow, Berlin, Singapore, Cape Town, Buenos Aires and Rio, each with its own traffic: snowplows, trams, double-deckers, minibus taxis and more.
 
 QUICK TO PLAY
 • Tap to hop, swipe to dodge.
@@ -34,9 +35,10 @@ QUICK TO PLAY
 • Works offline.
 
 ## Keywords (max 100, comma-separated, no spaces after commas)
-crossy,road,traffic,cross,street,stickman,hop,arcade,endless,frogger,city,dodge,cars,casual,tap
+crosswalk,traffic,street,cross,hop,arcade,endless,city,dodge,cars,casual,tap,chain,friends,doodle
 
-Note: Avoid other games' trademarked names in keywords if Apple rejects them; "crossy" and "frogger" can be removed.
+Keep other games' names and trademarks out of the name, subtitle, keywords, icon and screenshots. App Review
+rejected an earlier version (as "Stickman Crossing") under guideline 4.1(a) for resembling another game.
 
 ## Support URL
 Required. Any page where players can reach you (the privacy page with a contact email works to start).

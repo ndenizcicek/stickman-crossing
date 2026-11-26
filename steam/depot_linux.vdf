@@ -1,6 +1,6 @@
 "DepotBuild"
 {
-	// Linux / Steam Deck depot: put the unzipped "stickman-crossing-linux" build into content\linux\
+	// Linux / Steam Deck depot: put the unzipped "crosswalk-crew-linux" build into content\linux\
 	"DepotID" "0000002"
 	"ContentRoot" "..\content\linux\"
 	"FileMapping"

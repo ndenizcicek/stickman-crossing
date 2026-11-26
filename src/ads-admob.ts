@@ -9,7 +9,7 @@ import type { AdProvider } from './ads.js';
  */
 const TESTING = true;
 
-/** Real ad units from the Stickman Crossing app in AdMob (publisher pub-5010064104505404). */
+/** Real ad units from the game's app in AdMob ("Stickman Crossing", its working title) (publisher pub-5010064104505404). */
 const LIVE_UNITS = {
   ios: {
     interstitial: 'ca-app-pub-5010064104505404/6592855668', // "Between rounds"

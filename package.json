@@ -32,12 +32,12 @@
     "electron": "^33.0.0",
     "electron-builder": "^25.1.8"
   },
-  "description": "Hop across busy city streets, grab friends and keep your stickman chain alive.",
+  "description": "Hop across busy city streets, grab friends and keep your crew together.",
   "main": "desktop/main.cjs",
   "author": "Burak Çiçek",
   "build": {
     "appId": "com.stickmancrossing.game",
-    "productName": "Stickman Crossing",
+    "productName": "Crosswalk Crew",
     "directories": {
       "output": "release"
     },
@@ -63,7 +63,7 @@
       "target": "dir",
       "icon": "desktop/icon.png",
       "category": "Game",
-      "executableName": "stickman-crossing"
+      "executableName": "crosswalk-crew"
     }
   }
 }

@@ -1,6 +1,6 @@
 "DepotBuild"
 {
-	// Windows depot: put the unzipped "stickman-crossing-windows" build into content\windows\
+	// Windows depot: put the unzipped "crosswalk-crew-windows" build into content\windows\
 	"DepotID" "0000001"
 	"ContentRoot" "..\content\windows\"
 	"FileMapping"

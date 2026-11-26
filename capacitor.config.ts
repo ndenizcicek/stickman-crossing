@@ -4,7 +4,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 // (reverse-domain style, only letters, digits and dots).
 const config: CapacitorConfig = {
   appId: 'com.stickmancrossing.game',
-  appName: 'Stickman Crossing',
+  appName: 'Crosswalk Crew',
   webDir: 'dist',
   backgroundColor: '#f5f8fa',
   ios: {

@@ -17,7 +17,7 @@ Xcode veya Mac gerekmiyor. Bu adımlar Apple Developer üyeliğin **aktif** oldu
 ### 1. App Store Connect'te uygulamayı oluştur
 appstoreconnect.apple.com → Apps → "+" → New App
 - Platform: iOS
-- Name: Stickman Crossing
+- Name: Crosswalk Crew
 - Bundle ID: önce developer.apple.com → Identifiers bölümünde `com.stickmancrossing.game` kimliğini oluştur, sonra listeden seç.
 - SKU: `stickman-crossing`
 

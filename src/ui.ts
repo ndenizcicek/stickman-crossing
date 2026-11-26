@@ -86,7 +86,7 @@ export class UI {
 
   menu(o: { onPlay: () => void; onSettings: () => void; onQuit?: () => void }) {
     this.show(`
-      <h1>Stickman <span>Crossing</span></h1>
+      <h1>Crosswalk <span>Crew</span></h1>
       <p class="lead">Cross the street. Grab your friends. Don’t get flattened.</p>
       <div class="btns">
         <button data-primary id="m-play" class="big-btn">Play</button>

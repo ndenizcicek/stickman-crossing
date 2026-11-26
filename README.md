@@ -1,4 +1,4 @@
-# Stickman Crossing
+# Crosswalk Crew
 
 Hop across busy city streets, pick up friends waving on the sidewalk and keep your chain alive.
 Plain TypeScript + HTML canvas, no game engine and no image assets.

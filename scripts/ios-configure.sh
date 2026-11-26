@@ -6,7 +6,7 @@ set -euo pipefail
 PLIST="ios/App/App/Info.plist"
 PB=/usr/libexec/PlistBuddy
 
-# Stickman Crossing iOS app ID from AdMob.
+# iOS app ID from AdMob.
 ADMOB_APP_ID="${ADMOB_IOS_APP_ID:-ca-app-pub-5010064104505404~3423941850}"
 
 set_key() { # key type value

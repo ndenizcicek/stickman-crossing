@@ -48,7 +48,7 @@ function createWindow() {
     minWidth: 480,
     minHeight: 640,
     backgroundColor: '#e3e9ee',
-    title: 'Stickman Crossing',
+    title: 'Crosswalk Crew',
     icon: path.join(__dirname, 'icon.png'),
     autoHideMenuBar: true,
     webPreferences: {

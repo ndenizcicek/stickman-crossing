@@ -14,11 +14,11 @@ jobs:
           - os: windows-latest
             script: desktop:win
             folder: release/win-unpacked
-            name: stickman-crossing-windows
+            name: crosswalk-crew-windows
           - os: ubuntu-latest
             script: desktop:linux
             folder: release/linux-unpacked
-            name: stickman-crossing-linux
+            name: crosswalk-crew-linux
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4

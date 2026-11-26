@@ -65,7 +65,7 @@ partner.steamgames.com adresinden kayıt olunuyor. İstenenler:
 
 ### 3. Oyunu derle
 GitHub'da depo sayfası → **Actions** → **Steam build** → **Run workflow**. Birkaç dakika sonra çalışmanın sayfasında
-iki indirilebilir klasör çıkıyor: `stickman-crossing-windows` ve `stickman-crossing-linux`.
+iki indirilebilir klasör çıkıyor: `crosswalk-crew-windows` ve `crosswalk-crew-linux`.
 
 Kendi bilgisayarında denemek için: `npm install`, sonra `npm run desktop` (Steam açıksa başarımlar test
 uygulamasına gider).
@@ -79,8 +79,8 @@ Steamworks SDK'sını indir (partner.steamgames.com → Downloads). İçindeki `
 4. Steamworks'te **SteamPipe → Builds** sayfasında derlemeyi "default" dalına al.
 
 Steamworks'te başlatma ayarları (**Installation → General**):
-- Windows: `Stickman Crossing.exe`
-- Linux: `stickman-crossing`
+- Windows: `Crosswalk Crew.exe`
+- Linux: `crosswalk-crew`
 
 ### 5. Mağaza sayfası
 Gereken görseller:
@@ -109,4 +109,4 @@ fiyat. Fiyat için bu türde kısa arcade oyunlar genelde düşük fiyatlı oluy
 ## İsteğe bağlı: Steam Cloud
 Rekorlar ve açılan şehirler bilgisayarda saklanıyor. Başka bilgisayarda devam edilmesini istersen Steamworks'te
 **Steam Cloud → Auto-Cloud** ile Electron'un kayıt klasörü eklenebilir
-(Windows: `%APPDATA%/Stickman Crossing/Local Storage`, Linux: `~/.config/Stickman Crossing/Local Storage`).
+(Windows: `%APPDATA%/Crosswalk Crew/Local Storage`, Linux: `~/.config/Crosswalk Crew/Local Storage`).
